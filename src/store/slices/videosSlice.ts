@@ -61,14 +61,22 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
   const allResults: Video[] = [];
 
   for (const q of queries) {
-    const resp = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&order=date&q=${encodeURIComponent(
-        q
-      )}&key=${YOUTUBE_API_KEY}`
-    );
+    let nextPageToken = '';
+    let pageCount = 0;
+    while (pageCount < 3) {
+      const url = new URL('https://www.googleapis.com/youtube/v3/search');
+      url.searchParams.set('part', 'snippet');
+      url.searchParams.set('type', 'video');
+      url.searchParams.set('order', 'date');
+      url.searchParams.set('maxResults', '50');
+      url.searchParams.set('q', q);
+      url.searchParams.set('key', YOUTUBE_API_KEY);
+      if (nextPageToken) url.searchParams.set('pageToken', nextPageToken);
 
-    const videos: Video[] =
-      resp.data.items?.map((item: any) => ({
+      const resp = await axios.get(url.toString());
+      const items = resp.data.items || [];
+
+      const videos: Video[] = items.map((item: any) => ({
         id: item.id.videoId,
         title: item.snippet.title,
         description: item.snippet.description,
@@ -76,15 +84,22 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
         channelTitle: item.snippet.channelTitle,
         channelId: item.snippet.channelId,
         publishedAt: item.snippet.publishedAt,
-      })) || [];
+      }));
 
-    allResults.push(...videos);
+      allResults.push(...videos);
+      nextPageToken = resp.data.nextPageToken;
+      if (!nextPageToken) break;
+
+      pageCount++;
+    }
   }
+
   const filtered = allResults.filter((v) =>
     ['ESPN Brasil', 'GETV'].some((name) =>
       v.channelTitle.toLowerCase().includes(name.toLowerCase())
     )
   );
+
   return Array.from(new Map(filtered.map((v) => [v.id, v])).values()).sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
@@ -95,7 +110,7 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
 
   try {
     const videos = await fetchGlobalNFLVideos();
-    dispatch(setFeaturedVideos(videos.slice(0, 8)));
+    dispatch(setFeaturedVideos(videos.slice(0, 40)));
   } catch (error: any) {
     console.error('❌ Error fetching featured videos:', error);
     dispatch(setError('Failed to fetch featured videos.'));
@@ -105,17 +120,14 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
 export const fetchTeamVideos =
   (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
-
     try {
       const videos = await fetchGlobalNFLVideos();
-
       const filtered = videos.filter(
         (v) =>
           v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           v.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
-
-      dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 8) }));
+      dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 40) }));
     } catch (error: any) {
       console.error('❌ Error fetching team videos:', error);
       dispatch(setError('Failed to fetch team videos.'));
