@@ -21,13 +21,19 @@ const SecondaryNav = () => {
     <nav className="border-b border-border bg-card">
       <div className="container px-4">
         <div className="flex items-center gap-1 h-12">
-          <Button variant="ghost" className="text-foreground hover:text-primary hover:bg-accent/50">
+          <Button
+            variant="ghost"
+            className="text-foreground hover:text-primary hover:bg-accent/50"
+          >
             Home
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-foreground hover:text-primary hover:bg-accent/50">
+              <Button
+                variant="ghost"
+                className="text-foreground hover:text-primary hover:bg-accent/50"
+              >
                 Teams <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -39,8 +45,8 @@ const SecondaryNav = () => {
                   className="cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
+                    <div
+                      className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: team.color }}
                     />
                     {team.name}
@@ -49,10 +55,6 @@ const SecondaryNav = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <Button variant="ghost" className="text-foreground hover:text-primary hover:bg-accent/50">
-            Highlights
-          </Button>
         </div>
       </div>
     </nav>
