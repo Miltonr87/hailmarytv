@@ -1,19 +1,57 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/store/store';
 import { fetchFeaturedVideos } from '@/store/slices/videosSlice';
-import VideoCard from './VideoCard';
+
+const LazyYouTubePlayer = ({
+  videoId,
+  title,
+}: {
+  videoId: string;
+  title: string;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) setVisible(true);
+      },
+      { threshold: 0.2 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="aspect-video rounded-xl overflow-hidden">
+      {visible && (
+        <iframe
+          width="100%"
+          height="100%"
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      )}
+    </div>
+  );
+};
 
 const FeaturedSection = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { featured, loading } = useSelector((state: RootState) => state.videos);
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(fetchFeaturedVideos());
   }, [dispatch]);
 
   const handleVideoClick = (videoId: string) => {
-    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+    setActiveVideoId((prev) => (prev === videoId ? null : videoId));
   };
 
   if (loading && featured.length === 0) {
@@ -34,27 +72,32 @@ const FeaturedSection = () => {
       </section>
     );
   }
-
   return (
     <section className="py-8 bg-background">
       <div className="container px-4">
         <h2 className="text-2xl font-bold mb-6">Featured</h2>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Large Featured Video - Takes 6 columns */}
           <div className="lg:col-span-6">
             {featured[0] && (
               <div
                 onClick={() => handleVideoClick(featured[0].id)}
                 className="group cursor-pointer animate-fade-in h-full"
               >
-                <div className="relative overflow-hidden rounded-xl bg-muted h-full min-h-[400px]">
-                  <img
-                    src={featured[0].thumbnail}
-                    alt={featured[0].title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                {activeVideoId === featured[0].id ? (
+                  <LazyYouTubePlayer
+                    videoId={featured[0].id}
+                    title={featured[0].title}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden rounded-xl bg-muted h-full min-h-[400px]">
+                    <img
+                      src={featured[0].thumbnail}
+                      alt={featured[0].title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                )}
                 <div className="mt-3 space-y-1">
                   <h3 className="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                     {featured[0].title}
@@ -66,8 +109,6 @@ const FeaturedSection = () => {
               </div>
             )}
           </div>
-
-          {/* Three Smaller Videos - Takes 3 columns */}
           <div className="lg:col-span-3 space-y-4">
             {featured.slice(1, 4).map((video) => (
               <div
@@ -75,13 +116,18 @@ const FeaturedSection = () => {
                 onClick={() => handleVideoClick(video.id)}
                 className="group cursor-pointer animate-fade-in"
               >
-                <div className="relative overflow-hidden rounded-lg bg-muted aspect-video">
-                  <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+                {activeVideoId === video.id ? (
+                  <LazyYouTubePlayer videoId={video.id} title={video.title} />
+                ) : (
+                  <div className="relative overflow-hidden rounded-lg bg-muted aspect-video">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                )}
                 <div className="mt-2">
                   <h4 className="font-semibold line-clamp-2 text-sm group-hover:text-primary transition-colors">
                     {video.title}
