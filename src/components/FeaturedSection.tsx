@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { motion } from 'framer-motion';
 import { RootState, AppDispatch } from '@/store/store';
 import { fetchFeaturedVideos } from '@/store/slices/videosSlice';
 
@@ -31,7 +32,7 @@ const LazyYouTubePlayer = ({
         <iframe
           width="100%"
           height="100%"
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+          src={`https://www.youtube.com/embed/${videoId}`}
           title={title}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -50,38 +51,40 @@ const FeaturedSection = () => {
     dispatch(fetchFeaturedVideos());
   }, [dispatch]);
 
-  const handleVideoClick = (videoId: string) => {
+  const handleVideoClick = (videoId: string) =>
     setActiveVideoId((prev) => (prev === videoId ? null : videoId));
-  };
 
   if (loading && featured.length === 0) {
     return (
       <section className="py-8">
         <div className="container px-4">
-          <div className="h-8 w-48 bg-muted animate-pulse rounded mb-6" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="space-y-3">
-                <div className="aspect-video bg-muted animate-pulse rounded-xl" />
-                <div className="h-4 bg-muted animate-pulse rounded" />
-                <div className="h-3 bg-muted animate-pulse rounded w-2/3" />
-              </div>
+              <div
+                key={i}
+                className="aspect-video bg-muted animate-pulse rounded-xl"
+              />
             ))}
           </div>
         </div>
       </section>
     );
   }
+
   return (
     <section className="py-8 bg-background">
       <div className="container px-4">
-        <h2 className="text-2xl font-bold mb-6">Featured</h2>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-6">
+          <motion.div
+            className="lg:col-span-7"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             {featured[0] && (
               <div
                 onClick={() => handleVideoClick(featured[0].id)}
-                className="group cursor-pointer animate-fade-in h-full"
+                className="group cursor-pointer"
               >
                 {activeVideoId === featured[0].id ? (
                   <LazyYouTubePlayer
@@ -89,17 +92,23 @@ const FeaturedSection = () => {
                     title={featured[0].title}
                   />
                 ) : (
-                  <div className="relative overflow-hidden rounded-xl bg-muted h-full min-h-[400px]">
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    className="relative overflow-hidden rounded-xl bg-muted h-full"
+                  >
                     <img
                       src={featured[0].thumbnail}
                       alt={featured[0].title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100"
+                      transition={{ duration: 0.3 }}
+                    />
+                  </motion.div>
                 )}
-                <div className="mt-3 space-y-1">
-                  <h3 className="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                <div className="mt-3">
+                  <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                     {featured[0].title}
                   </h3>
                   <p className="text-sm text-muted-foreground">
@@ -108,35 +117,39 @@ const FeaturedSection = () => {
                 </div>
               </div>
             )}
-          </div>
-          <div className="lg:col-span-3 space-y-4">
-            {featured.slice(1, 4).map((video) => (
-              <div
+          </motion.div>
+          <div className="lg:col-span-5 space-y-4">
+            {featured.slice(1, 4).map((video, i) => (
+              <motion.div
                 key={video.id}
                 onClick={() => handleVideoClick(video.id)}
-                className="group cursor-pointer animate-fade-in"
+                className="group cursor-pointer flex gap-3 items-center"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
               >
-                {activeVideoId === video.id ? (
-                  <LazyYouTubePlayer videoId={video.id} title={video.title} />
-                ) : (
-                  <div className="relative overflow-hidden rounded-lg bg-muted aspect-video">
-                    <img
+                <div className="relative w-44 flex-shrink-0 overflow-hidden rounded-lg aspect-video">
+                  {activeVideoId === video.id ? (
+                    <LazyYouTubePlayer videoId={video.id} title={video.title} />
+                  ) : (
+                    <motion.img
                       src={video.thumbnail}
                       alt={video.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.3 }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                )}
-                <div className="mt-2">
-                  <h4 className="font-semibold line-clamp-2 text-sm group-hover:text-primary transition-colors">
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
                     {video.title}
                   </h4>
                   <p className="text-xs text-muted-foreground mt-1">
                     {video.channelTitle}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
