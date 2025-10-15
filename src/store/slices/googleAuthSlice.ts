@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { initGapi, signInWithGoogle, signOutGoogle, getCurrentUser } from '@/lib/googleAuth';
+import { initGapi, initGoogleIdentity, signInWithGoogle, signOutGoogle } from '@/lib/googleAuth';
 
 interface GoogleUser {
     id: string;
@@ -19,42 +19,43 @@ const initialState: GoogleAuthState = {
     status: 'idle',
 };
 
+/**
+ * ✅ Initialize both GAPI (for YouTube) and Google Identity (for login)
+ */
 export const initializeGapi = createAsyncThunk('googleAuth/init', async () => {
-    console.log('🧩 Initializing Google API client...');
+    console.log('🧩 Initializing Google APIs...');
     await initGapi();
-    const profile = getCurrentUser();
-    if (!profile) return null;
-    return {
-        id: profile.getId(),
-        name: profile.getName(),
-        email: profile.getEmail(),
-        image: profile.getImageUrl(),
-    } as GoogleUser;
+    await initGoogleIdentity();
+    return null; // GIS doesn’t auto-restore sessions
 });
 
-export const googleSignIn = createAsyncThunk('googleAuth/signIn', async (_, { rejectWithValue }) => {
-    try {
-        if (!(window as any).gapi?.auth2) {
-            console.warn('⚠️ gapi.auth2 not ready, initializing...');
-            await initGapi();
+/**
+ * ✅ Sign in via Google Identity Services
+ */
+export const googleSignIn = createAsyncThunk(
+    'googleAuth/signIn',
+    async (_, { rejectWithValue }) => {
+        try {
+            console.log('🔹 Opening Google Sign-In popup...');
+            const profile = await signInWithGoogle(); // returns JSON { id, name, email, image }
+            console.log('✅ Login successful for:', profile.name);
+
+            return {
+                id: profile.id,
+                name: profile.name,
+                email: profile.email,
+                image: profile.image,
+            } as GoogleUser;
+        } catch (error: any) {
+            console.error('❌ Google Sign-In failed:', error);
+            return rejectWithValue(error.message || 'Sign-in failed');
         }
-
-        console.log('🔹 Opening Google Sign-In popup...');
-        const profile = await signInWithGoogle();
-        console.log('✅ Login successful for:', profile.getName());
-
-        return {
-            id: profile.getId(),
-            name: profile.getName(),
-            email: profile.getEmail(),
-            image: profile.getImageUrl(),
-        } as GoogleUser;
-    } catch (error: any) {
-        console.error('❌ Google Sign-In failed:', error);
-        return rejectWithValue(error.message || 'Sign-in failed');
     }
-});
+);
 
+/**
+ * ✅ Sign out (revokes token + disables auto-select)
+ */
 export const googleSignOut = createAsyncThunk('googleAuth/signOut', async () => {
     console.log('🔹 Signing out...');
     await signOutGoogle();
@@ -67,10 +68,12 @@ const googleAuthSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(initializeGapi.fulfilled, (state, action) => {
-                state.user = action.payload;
-                state.status = action.payload ? 'authenticated' : 'idle';
+            // Init
+            .addCase(initializeGapi.fulfilled, (state) => {
+                state.status = 'idle';
             })
+
+            // Sign-In flow
             .addCase(googleSignIn.pending, (state) => {
                 state.status = 'loading';
                 state.error = undefined;
@@ -83,6 +86,8 @@ const googleAuthSlice = createSlice({
                 state.status = 'error';
                 state.error = action.payload as string;
             })
+
+            // Sign-Out flow
             .addCase(googleSignOut.fulfilled, (state) => {
                 state.user = null;
                 state.status = 'idle';

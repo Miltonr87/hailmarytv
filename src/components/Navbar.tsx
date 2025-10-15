@@ -23,6 +23,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4">
+        {/* ---- Logo ---- */}
         <div className="flex items-center gap-3">
           <img
             src={footballLogo}
@@ -66,12 +67,21 @@ const Navbar = () => {
                 <Bell className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3">
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-8 h-8 rounded-full ring-2 ring-primary"
-                />
-                <span className="text-sm font-medium">{user.name}</span>
+                {user?.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="w-9 h-9 rounded-full ring-2 ring-primary object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
+                    <User className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                )}
+                <span className="text-sm font-medium truncate max-w-[120px]">
+                  {user?.name?.split(' ')[0] || 'User'}
+                </span>
                 <Button
                   variant="secondary"
                   size="sm"
