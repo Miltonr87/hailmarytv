@@ -59,12 +59,14 @@ const FeaturedSection = () => {
                   <h3 className="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                     {featured[0].title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{featured[0].channelTitle}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {featured[0].channelTitle}
+                  </p>
                 </div>
               </div>
             )}
           </div>
-          
+
           {/* Three Smaller Videos - Takes 3 columns */}
           <div className="lg:col-span-3 space-y-4">
             {featured.slice(1, 4).map((video) => (
@@ -84,20 +86,12 @@ const FeaturedSection = () => {
                   <h4 className="font-semibold line-clamp-2 text-sm group-hover:text-primary transition-colors">
                     {video.title}
                   </h4>
-                  <p className="text-xs text-muted-foreground mt-1">{video.channelTitle}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {video.channelTitle}
+                  </p>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Ad Space - Takes 3 columns */}
-          <div className="lg:col-span-3">
-            <div className="bg-muted rounded-lg flex items-center justify-center aspect-square border-2 border-dashed border-border">
-              <div className="text-center p-6">
-                <p className="text-muted-foreground font-semibold">Square Pop-Up</p>
-                <p className="text-xs text-muted-foreground mt-1">250x250</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
