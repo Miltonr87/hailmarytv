@@ -5,7 +5,7 @@ const SCOPES = [
     'openid',
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/youtube.readonly',
+    'https://www.googleapis.com/auth/youtube.upload',
 ].join(' ');
 
 let gapiLoaded = false;
@@ -23,7 +23,6 @@ declare global {
 export function initGapi(): Promise<void> {
     return new Promise((resolve, reject) => {
         if (gapiLoaded) return resolve();
-
         const script = document.createElement('script');
         script.src = 'https://apis.google.com/js/api.js';
         script.onload = async () => {
@@ -34,6 +33,7 @@ export function initGapi(): Promise<void> {
                         discoveryDocs: [DISCOVERY_DOC],
                     });
                     gapiLoaded = true;
+                    console.log('✅ GAPI initialized');
                     resolve();
                 });
             } catch (err) {
@@ -54,6 +54,7 @@ export function initGoogleIdentity(): Promise<void> {
         script.defer = true;
         script.onload = () => {
             gisLoaded = true;
+            console.log('✅ Google Identity initialized');
             resolve();
         };
         script.onerror = reject;
@@ -66,9 +67,9 @@ export async function signInWithGoogle(): Promise<{
     name: string;
     email: string;
     image: string;
+    access_token: string;
 }> {
     if (!gisLoaded) await initGoogleIdentity();
-
     return new Promise((resolve, reject) => {
         if (!window.google?.accounts?.oauth2) {
             reject(new Error('Google Identity Services not loaded.'));
@@ -83,12 +84,12 @@ export async function signInWithGoogle(): Promise<{
                     return;
                 }
                 accessToken = tokenResponse.access_token;
+                console.log('🔑 Access Token:', accessToken);
                 try {
                     const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
+                        headers: { Authorization: `Bearer ${accessToken}` },
                     });
+
                     if (!res.ok) {
                         reject(await res.json());
                         return;
@@ -99,6 +100,7 @@ export async function signInWithGoogle(): Promise<{
                         name: profile.name,
                         email: profile.email,
                         image: profile.picture,
+                        access_token: accessToken, // testando aqui para uploads, preciso validar no DevTools do Redux
                     });
                 } catch (error) {
                     reject(error);
@@ -116,14 +118,14 @@ export async function signOutGoogle(): Promise<void> {
                 method: 'POST',
                 mode: 'no-cors',
             });
+            console.log('🔹 Token revoked');
             accessToken = null;
         }
-
         if (window.google?.accounts?.id) {
             window.google.accounts.id.disableAutoSelect();
         }
     } catch (e) {
-        console.warn('Sign-out warning:', e);
+        console.warn('⚠️ Sign-out warning:', e);
     }
 }
 

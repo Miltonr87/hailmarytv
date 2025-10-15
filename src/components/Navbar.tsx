@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { Search, Upload, Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/store/store';
 import { googleSignIn, googleSignOut } from '@/store/slices/googleAuthSlice';
+import { Modal } from '@/components/ui/modal';
+import { VideoUpload } from '@/components/VideoUpload';
 import footballLogo from '@/assets/football-logo.png';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, status } = useSelector((state: RootState) => state.googleAuth);
+  const [openUpload, setOpenUpload] = useState(false);
 
   const handleLogin = () => {
     if (status !== 'loading') dispatch(googleSignIn());
@@ -23,7 +27,7 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* ---- Logo ---- */}
+        {/* Logo */}
         <div className="flex items-center gap-3">
           <img
             src={footballLogo}
@@ -56,6 +60,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 className="hover:bg-accent hover:text-accent-foreground"
+                onClick={() => setOpenUpload(true)} // 👈 open modal
               >
                 <Upload className="h-5 w-5" />
               </Button>
@@ -104,6 +109,20 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      <Modal
+        open={openUpload}
+        onOpenChange={setOpenUpload}
+        title="Upload NFL Highlight"
+        description="Select a video file and upload it directly to your YouTube channel."
+      >
+        {user?.access_token ? (
+          <VideoUpload accessToken={user.access_token} />
+        ) : (
+          <p className="text-center text-muted-foreground">
+            Please sign in with Google to upload.
+          </p>
+        )}
+      </Modal>
     </nav>
   );
 };
