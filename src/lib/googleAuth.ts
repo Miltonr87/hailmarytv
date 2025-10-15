@@ -100,7 +100,7 @@ export async function signInWithGoogle(): Promise<{
                         name: profile.name,
                         email: profile.email,
                         image: profile.picture,
-                        access_token: accessToken, // testando aqui para uploads, preciso validar no DevTools do Redux
+                        access_token: accessToken,
                     });
                 } catch (error) {
                     reject(error);

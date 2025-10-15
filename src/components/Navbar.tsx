@@ -60,7 +60,7 @@ const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 className="hover:bg-accent hover:text-accent-foreground"
-                onClick={() => setOpenUpload(true)} // 👈 open modal
+                onClick={() => setOpenUpload(true)}
               >
                 <Upload className="h-5 w-5" />
               </Button>
