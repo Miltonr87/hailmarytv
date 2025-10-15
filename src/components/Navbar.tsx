@@ -27,16 +27,17 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <img
-            src={footballLogo}
-            alt="Football"
-            className="w-9 h-9 object-contain"
-          />
-          <h1 className="text-xl font-extrabold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            HailMaryTV
-          </h1>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+              <span className="text-accent-foreground font-bold text-sm">
+                🏈
+              </span>
+            </div>
+            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              HailMaryTV
+            </h1>
+          </div>
         </div>
         <div className="flex flex-1 max-w-2xl mx-8">
           <div className="relative w-full">

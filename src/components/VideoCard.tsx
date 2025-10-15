@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Video } from '@/store/slices/videosSlice';
+import { motion } from 'framer-motion';
+import { Play, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import type { Video } from '@/store/slices/videosSlice';
 
 const LazyYouTubePlayer = ({
   videoId,
@@ -43,25 +45,44 @@ const VideoCard = ({ video }: { video: Video }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <div
-      className="group cursor-pointer animate-fade-in"
+    <motion.div
+      className="group cursor-pointer bg-card rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.2 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      whileHover={{ scale: 1.02 }}
       onClick={() => setIsPlaying(true)}
     >
       {!isPlaying ? (
         <>
-          <div className="relative overflow-hidden rounded-xl bg-muted">
+          <div className="relative overflow-hidden rounded-t-xl bg-muted">
             <img
               src={video.thumbnail}
               alt={video.title}
-              className="w-full aspect-video object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <Play className="w-7 h-7 text-white ml-1" />
+              </div>
+            </div>
+            <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
+              <Clock className="w-3 h-3" />
+              <span>
+                {Math.floor(Math.random() * 40) + 1}:
+                {Math.floor(Math.random() * 59)
+                  .toString()
+                  .padStart(2, '0')}
+              </span>
+            </div>
           </div>
-          <div className="mt-3 space-y-1">
-            <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+          <div className="p-3">
+            <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
               {video.title}
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               {video.channelTitle}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -74,7 +95,7 @@ const VideoCard = ({ video }: { video: Video }) => {
       ) : (
         <LazyYouTubePlayer videoId={video.id} title={video.title} />
       )}
-    </div>
+    </motion.div>
   );
 };
 

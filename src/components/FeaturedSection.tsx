@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
+import { Play } from 'lucide-react';
 import { RootState, AppDispatch } from '@/store/store';
 import { fetchFeaturedVideos } from '@/store/slices/videosSlice';
 
@@ -21,7 +22,6 @@ const LazyYouTubePlayer = ({
       },
       { threshold: 0.2 }
     );
-
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
@@ -82,9 +82,10 @@ const FeaturedSection = () => {
             transition={{ duration: 0.5 }}
           >
             {featured[0] && (
-              <div
+              <motion.div
                 onClick={() => handleVideoClick(featured[0].id)}
-                className="group cursor-pointer"
+                className="group cursor-pointer rounded-xl overflow-hidden transition-transform"
+                whileHover={{ scale: 1.02 }}
               >
                 {activeVideoId === featured[0].id ? (
                   <LazyYouTubePlayer
@@ -92,20 +93,20 @@ const FeaturedSection = () => {
                     title={featured[0].title}
                   />
                 ) : (
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="relative overflow-hidden rounded-xl bg-muted h-full"
-                  >
+                  <div className="relative aspect-video rounded-xl overflow-hidden">
                     <img
                       src={featured[0].thumbnail}
                       alt={featured[0].title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.3 }}
-                    />
-                  </motion.div>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                        <Play className="w-8 h-8 text-white ml-1" />
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 pointer-events-none rounded-xl group-hover:shadow-[0_0_40px_8px_rgba(0,0,0,0.35)] transition-shadow duration-500" />
+                  </div>
                 )}
                 <div className="mt-3">
                   <h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
@@ -115,7 +116,7 @@ const FeaturedSection = () => {
                     {featured[0].channelTitle}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             )}
           </motion.div>
           <div className="lg:col-span-5 space-y-4">
@@ -123,22 +124,29 @@ const FeaturedSection = () => {
               <motion.div
                 key={video.id}
                 onClick={() => handleVideoClick(video.id)}
-                className="group cursor-pointer flex gap-3 items-center"
+                className="group cursor-pointer flex gap-3 items-center rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
+                whileHover={{ scale: 1.02 }}
               >
                 <div className="relative w-44 flex-shrink-0 overflow-hidden rounded-lg aspect-video">
                   {activeVideoId === video.id ? (
                     <LazyYouTubePlayer videoId={video.id} title={video.title} />
                   ) : (
-                    <motion.img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.3 }}
-                    />
+                    <>
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                          <Play className="w-6 h-6 text-white ml-1" />
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
                 <div>
