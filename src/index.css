@@ -2,15 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional global styles */
-body {
-  @apply bg-gray-900 text-white font-sans min-h-screen;
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 220 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 15%;
+
+    /* NFL Navy - Primary brand color */
+    --primary: 220 45% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Championship Gold */
+    --secondary: 45 95% 55%;
+    --secondary-foreground: 220 45% 25%;
+
+    --muted: 210 20% 92%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Touchdown Red - Accent */
+    --accent: 355 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 220 45% 25%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(220 45% 25%), hsl(220 55% 35%));
+    --gradient-accent: linear-gradient(135deg, hsl(355 85% 55%), hsl(15 85% 60%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 95% 55%), hsl(35 95% 65%));
+    
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(220 45% 25% / 0.2);
+    --shadow-card: 0 4px 20px hsl(220 45% 25% / 0.08);
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 0 0% 95%;
+
+    --card: 220 20% 12%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 220 20% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 45 95% 55%;
+    --primary-foreground: 220 45% 25%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 220 20% 15%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 355 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 18%;
+    --ring: 45 95% 55%;
+
+    --shadow-glow: 0 0 40px hsl(45 95% 55% / 0.15);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.4);
+  }
 }
 
-a {
-  @apply text-blue-400 hover:text-blue-300 transition-colors;
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-button {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 transition-colors;
+  body {
+    @apply bg-background text-foreground;
+  }
 }
