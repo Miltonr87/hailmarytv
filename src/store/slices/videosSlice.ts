@@ -50,11 +50,8 @@ const videosSlice = createSlice({
 
 export const { setLoading, setFeaturedVideos, setTeamVideos, setError } = videosSlice.actions;
 
-// Thunk actions
 export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
-  
-  // Simulate API delay
   setTimeout(() => {
     dispatch(setFeaturedVideos(MOCK_VIDEOS));
   }, 500);
@@ -62,8 +59,6 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
 
 export const fetchTeamVideos = (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
-  
-  // Simulate API delay and return shuffled mock videos
   setTimeout(() => {
     const shuffled = [...MOCK_VIDEOS].sort(() => Math.random() - 0.5);
     dispatch(setTeamVideos({ team: teamName, videos: shuffled }));
