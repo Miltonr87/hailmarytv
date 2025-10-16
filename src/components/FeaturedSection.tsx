@@ -120,7 +120,7 @@ const FeaturedSection = () => {
             )}
           </motion.div>
           <div className="lg:col-span-5 space-y-4">
-            {featured.slice(1, 4).map((video, i) => (
+            {featured.slice(1, 5).map((video, i) => (
               <motion.div
                 key={video.id}
                 onClick={() => handleVideoClick(video.id)}

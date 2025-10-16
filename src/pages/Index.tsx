@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import SecondaryNav from '@/components/SecondaryNav';
 import FeaturedSection from '@/components/FeaturedSection';
 import MoreVideosSection from '@/components/MoreVideosSection';
+import { Footer } from '@/components/Footer';
 
 const Index = () => {
   return (
@@ -10,6 +11,7 @@ const Index = () => {
       <SecondaryNav />
       <FeaturedSection />
       <MoreVideosSection />
+      <Footer />
     </div>
   );
 };

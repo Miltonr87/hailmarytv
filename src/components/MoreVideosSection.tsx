@@ -36,6 +36,7 @@ const MoreVideosSection = () => {
       </section>
     );
   }
+
   return (
     <section ref={ref} className="py-8 bg-muted/20 overflow-hidden">
       <motion.div
@@ -58,6 +59,7 @@ const MoreVideosSection = () => {
           >
             More Videos
           </motion.h2>
+
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             initial="hidden"
@@ -72,7 +74,7 @@ const MoreVideosSection = () => {
               hidden: {},
             }}
           >
-            {featured.slice(4, 12).map((video) => (
+            {featured.slice(4, 20).map((video) => (
               <motion.div
                 key={video.id}
                 variants={{

@@ -3,6 +3,9 @@ import type { AppDispatch } from '../store';
 import axios from 'axios';
 import mockVideos from '../mocks';
 
+// -----------------------------
+// 🔹 Types
+// -----------------------------
 export interface Video {
   id: string;
   title: string;
@@ -16,17 +19,44 @@ export interface Video {
 interface VideosState {
   featured: Video[];
   teamVideos: Record<string, Video[]>;
+  searchHistory: string[];
   loading: boolean;
   error: string | null;
 }
 
+// -----------------------------
+// 🔹 Initial state
+// -----------------------------
 const initialState: VideosState = {
   featured: [],
   teamVideos: {},
+  searchHistory: [],
   loading: false,
   error: null,
 };
 
+// -----------------------------
+// 🔹 LocalStorage helpers
+// -----------------------------
+function saveSearchHistory(term: string): string[] {
+  const key = 'search_history';
+  const existing = JSON.parse(localStorage.getItem(key) || '[]');
+  const updated = [term, ...existing.filter((t: string) => t !== term)].slice(0, 10);
+  localStorage.setItem(key, JSON.stringify(updated));
+  return updated;
+}
+
+function loadSearchHistory(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem('search_history') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+// -----------------------------
+// 🔹 Slice
+// -----------------------------
 const videosSlice = createSlice({
   name: 'videos',
   initialState,
@@ -49,16 +79,35 @@ const videosSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    addSearchHistory: (state, action: PayloadAction<string>) => {
+      state.searchHistory = saveSearchHistory(action.payload);
+    },
+    loadSearchHistoryState: (state) => {
+      state.searchHistory = loadSearchHistory();
+    },
   },
 });
 
-export const { setLoading, setFeaturedVideos, setTeamVideos, setError } =
-  videosSlice.actions;
+export const {
+  setLoading,
+  setFeaturedVideos,
+  setTeamVideos,
+  setError,
+  addSearchHistory,
+  loadSearchHistoryState,
+} = videosSlice.actions;
+
 export default videosSlice.reducer;
 
+// -----------------------------
+// 🔹 Config
+// -----------------------------
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
+// -----------------------------
+// 🔹 Helpers
+// -----------------------------
 async function fetchGlobalNFLVideos(): Promise<Video[]> {
   if (USE_MOCK) {
     console.log('🧩 Skipping YouTube API — using mock videos only.');
@@ -109,6 +158,9 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
   );
 }
 
+// -----------------------------
+// 🔹 Thunks
+// -----------------------------
 export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   try {
@@ -126,6 +178,65 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
     );
   }
 };
+
+export const fetchVideosBySearch =
+  (query: string) => async (dispatch: AppDispatch) => {
+    dispatch(setLoading(true));
+    dispatch(addSearchHistory(query)); // ✅ salva histórico
+
+    try {
+      if (USE_MOCK) {
+        console.log('🧩 Using mock data for search results.');
+        const filtered = mockVideos.filter((v) =>
+          v.title.toLowerCase().includes(query.toLowerCase())
+        );
+        dispatch(setFeaturedVideos(filtered.slice(0, 40)));
+        return;
+      }
+
+      const searchQuery = `${query} NFL`; // ✅ apenas 1 vez
+
+      const url = new URL('https://www.googleapis.com/youtube/v3/search');
+      url.searchParams.set('part', 'snippet');
+      url.searchParams.set('type', 'video');
+      url.searchParams.set('order', 'relevance');
+      url.searchParams.set('maxResults', '25');
+      url.searchParams.set('q', searchQuery);
+      url.searchParams.set('key', YOUTUBE_API_KEY);
+
+      const resp = await axios.get(url.toString());
+      const items = resp.data.items || [];
+
+      const videos: Video[] = items.map((item: any) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails?.high?.url,
+        channelTitle: item.snippet.channelTitle,
+        channelId: item.snippet.channelId,
+        publishedAt: item.snippet.publishedAt,
+      }));
+
+      const filtered = videos.filter(
+        (v) =>
+          v.title.toLowerCase().includes('nfl') ||
+          v.description.toLowerCase().includes('nfl') ||
+          v.channelTitle.toLowerCase().includes('nfl')
+      );
+
+      dispatch(setFeaturedVideos(filtered.slice(0, 40)));
+    } catch (error: any) {
+      console.error('⚠️ Search failed:', error?.message || error);
+      dispatch(setFeaturedVideos(mockVideos));
+      dispatch(
+        setError(
+          error?.response?.status
+            ? `YouTube API error ${error.response.status} — fallback to mock data.`
+            : 'Network error — using mock videos.'
+        )
+      );
+    }
+  };
 
 export const fetchTeamVideos =
   (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {

@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { Search, Upload, Bell, User } from 'lucide-react';
+import { Upload, Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/store/store';
 import { googleSignIn, googleSignOut } from '@/store/slices/googleAuthSlice';
 import { Modal } from '@/components/ui/modal';
 import { VideoUpload } from '@/components/VideoUpload';
-import footballLogo from '@/assets/football-logo.png';
+import SearchBar from '@/components/SearchBar';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, status } = useSelector((state: RootState) => state.googleAuth);
   const [openUpload, setOpenUpload] = useState(false);
+  const isAuthenticated = !!user;
 
   const handleLogin = () => {
     if (status !== 'loading') dispatch(googleSignIn());
@@ -22,46 +22,33 @@ const Navbar = () => {
     dispatch(googleSignOut());
   };
 
-  const isAuthenticated = !!user;
-
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4">
+        {/* --- Logo --- */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-              <span className="text-accent-foreground font-bold text-sm">
-                🏈
-              </span>
-            </div>
-            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              HailMaryTV
-            </h1>
+          <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+            <span className="text-accent-foreground font-bold text-sm">🏈</span>
           </div>
+          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            HailMaryTV
+          </h1>
         </div>
+
+        {/* --- Search Bar --- */}
         <div className="flex flex-1 max-w-2xl mx-8">
-          <div className="relative w-full">
-            <Input
-              placeholder="Search NFL highlights..."
-              className="pr-12 bg-muted border-border"
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="absolute right-0 top-0 h-full hover:bg-accent hover:text-accent-foreground"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
+          <SearchBar />
         </div>
+
+        {/* --- Right Section --- */}
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-accent hover:text-accent-foreground"
                 onClick={() => setOpenUpload(true)}
+                className="hover:bg-accent hover:text-accent-foreground"
               >
                 <Upload className="h-5 w-5" />
               </Button>
@@ -110,6 +97,8 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      {/* --- Upload Modal --- */}
       <Modal
         open={openUpload}
         onOpenChange={setOpenUpload}
