@@ -134,8 +134,9 @@ APIs are defined in `/lib/googleAuth.ts`, using secure client-side access via en
 | UI Library          | Shadcn/UI + TailwindCSS             |
 | Animations          | Framer Motion                       |
 | Auth / API          | Google OAuth2 + YouTube Data API v3 |
+| HTTP Client         | Axios                               |
 | Icons               | Lucide React                        |
-| Toast Notifications | Radix UI                            |
+| Toast Notifications | Radix UI + Sonner                   |
 | Build Tool          | Vite                                |
 
 ---
