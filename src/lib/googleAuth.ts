@@ -88,7 +88,6 @@ export async function signInWithGoogle(): Promise<{
                     return;
                 }
                 accessToken = tokenResponse.access_token;
-                console.log('🔑 Access Token:', accessToken);
                 try {
                     const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                         headers: { Authorization: `Bearer ${accessToken}` },
@@ -110,7 +109,6 @@ export async function signInWithGoogle(): Promise<{
                 }
             },
         });
-
         tokenClient.requestAccessToken({ prompt: 'consent' });
     });
 }
