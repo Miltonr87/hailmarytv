@@ -1,15 +1,15 @@
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
 import { NFL_TEAMS } from '@/config/youtube';
-import { useState } from 'react';
 
 const SecondaryNav = () => {
   const navigate = useNavigate();
@@ -80,11 +80,13 @@ const SecondaryNav = () => {
                         className="cursor-pointer hover:bg-accent/30 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <img
-                            src={team.logoUrl}
-                            alt={team.name}
-                            className="w-6 h-6 object-contain"
-                          />
+                          {team.logoUrl && (
+                            <img
+                              src={team.logoUrl}
+                              alt={team.name}
+                              className="w-6 h-6 object-contain"
+                            />
+                          )}
                           <span className="text-sm font-medium">
                             {team.name}
                           </span>

@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '@/store/store';
-import { fetchVideosBySearch } from '@/store/slices/videosSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { fetchVideosBySearch } from '@/features/videos';
 
-const SearchBar = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { searchHistory } = useSelector((state: RootState) => state.videos);
+const Searchbar = () => {
+  const dispatch = useAppDispatch();
+  const { searchHistory } = useAppSelector((state) => state.videos);
+
   const [query, setQuery] = useState('');
   const [showHistory, setShowHistory] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +18,7 @@ const SearchBar = () => {
     if (!query.trim() || isLoading) return;
     setIsLoading(true);
     setShowHistory(false);
+
     try {
       await dispatch(fetchVideosBySearch(query.trim()));
     } finally {
@@ -29,6 +30,7 @@ const SearchBar = () => {
     setQuery(term);
     setShowHistory(false);
     setIsLoading(true);
+
     try {
       await dispatch(fetchVideosBySearch(term));
     } finally {
@@ -100,4 +102,4 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+export default Searchbar;

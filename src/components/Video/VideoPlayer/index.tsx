@@ -1,11 +1,11 @@
-import YouTube from 'react-youtube';
+import YouTube, { YouTubeProps } from 'react-youtube';
 
 interface VideoPlayerProps {
   videoId: string;
 }
 
-export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
-  const opts = {
+const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
+  const opts: YouTubeProps['opts'] = {
     height: '360',
     width: '100%',
     playerVars: {
@@ -21,3 +21,5 @@ export const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
     </div>
   );
 };
+
+export default VideoPlayer;

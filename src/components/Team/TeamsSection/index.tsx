@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@/store/store';
-import { fetchTeamVideos } from '@/store/slices/videosSlice';
-import { NFL_TEAMS } from '@/config/youtube';
-import VideoCard from './VideoCard';
 import { ChevronRight } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { fetchTeamVideos } from '@/features/videos';
+import { NFL_TEAMS } from '@/config/youtube';
+import VideoCard from '@/components/Video/VideoCard';
 
 interface TeamSectionProps {
   teamName: string;
@@ -18,13 +17,13 @@ const TeamSection = ({
   searchQuery,
   teamColor,
 }: TeamSectionProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const videos =
-    useSelector((state: RootState) => state.videos.teamVideos[teamName]) || [];
+    useAppSelector((state) => state.videos.teamVideos[teamName]) || [];
 
   useEffect(() => {
     if (videos.length === 0) {
-      dispatch(fetchTeamVideos(teamName, searchQuery));
+      dispatch(fetchTeamVideos({ teamName, searchQuery }));
     }
   }, [dispatch, teamName, searchQuery, videos.length]);
 
@@ -42,10 +41,22 @@ const TeamSection = ({
           />
           <h3 className="text-2xl font-bold">{teamName}</h3>
         </div>
-        <Button variant="ghost" className="text-primary hover:text-accent">
+        <Button
+          variant="ghost"
+          className="text-primary hover:text-accent"
+          onClick={() =>
+            window.open(
+              `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                searchQuery
+              )}`,
+              '_blank'
+            )
+          }
+        >
           View All <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
+
       {videos.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
@@ -59,7 +70,11 @@ const TeamSection = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {videos.slice(0, 4).map((video) => (
-            <VideoCard key={video.id} video={video} />
+            <VideoCard
+              key={video.id}
+              video={video}
+              onClick={() => handleVideoClick(video.id)}
+            />
           ))}
         </div>
       )}
@@ -75,6 +90,7 @@ const TeamsSection = () => {
           <div className="h-1 w-12 bg-gradient-to-r from-secondary to-accent rounded-full" />
           <h2 className="text-3xl font-bold">NFL Teams</h2>
         </div>
+
         <div className="space-y-0">
           {NFL_TEAMS.slice(0, 8).map((team) => (
             <TeamSection

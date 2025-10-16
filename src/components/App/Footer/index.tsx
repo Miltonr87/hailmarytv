@@ -1,4 +1,4 @@
-export const Footer = () => {
+const Footer = () => {
   return (
     <footer className="border-t border-border/50 mt-12 sm:mt-20 py-6 sm:py-8 relative">
       <div className="container mx-auto px-4 text-center flex flex-col items-center gap-2">
@@ -23,3 +23,4 @@ export const Footer = () => {
     </footer>
   );
 };
+export default Footer;

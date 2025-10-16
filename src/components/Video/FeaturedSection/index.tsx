@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
-import { RootState, AppDispatch } from '@/store/store';
-import { fetchFeaturedVideos } from '@/store/slices/videosSlice';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { fetchFeaturedVideos } from '@/features/videos';
 
 const LazyYouTubePlayer = ({
   videoId,
@@ -43,8 +42,8 @@ const LazyYouTubePlayer = ({
 };
 
 const FeaturedSection = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { featured, loading } = useSelector((state: RootState) => state.videos);
+  const dispatch = useAppDispatch();
+  const { featured, loading } = useAppSelector((state) => state.videos);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,6 +74,7 @@ const FeaturedSection = () => {
     <section className="py-8 bg-background">
       <div className="container px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Main Featured */}
           <motion.div
             className="lg:col-span-7"
             initial={{ opacity: 0, y: 30 }}
@@ -119,6 +119,8 @@ const FeaturedSection = () => {
               </motion.div>
             )}
           </motion.div>
+
+          {/* Side list */}
           <div className="lg:col-span-5 space-y-4">
             {featured.slice(1, 5).map((video, i) => (
               <motion.div

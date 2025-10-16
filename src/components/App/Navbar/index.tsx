@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Upload, Bell, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '@/store/store';
-import { googleSignIn, googleSignOut } from '@/store/slices/googleAuthSlice';
+import type { RootState, AppDispatch } from '@/app/store';
+import { googleSignIn, googleSignOut } from '@/features/googleAuth';
 import { Modal } from '@/components/ui/modal';
-import { VideoUpload } from '@/components/VideoUpload';
-import SearchBar from '@/components/SearchBar';
+import VideoUpload from '@/components/Upload/VideoUpload';
+import Searchbar from '@/components/Search/Searchbar';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +25,6 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-lg">
       <div className="container flex h-16 items-center justify-between px-4">
-        {/* --- Logo --- */}
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
             <span className="text-accent-foreground font-bold text-sm">🏈</span>
@@ -34,13 +33,9 @@ const Navbar = () => {
             HailMaryTV
           </h1>
         </div>
-
-        {/* --- Search Bar --- */}
         <div className="flex flex-1 max-w-2xl mx-8">
-          <SearchBar />
+          <Searchbar />
         </div>
-
-        {/* --- Right Section --- */}
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
             <>
@@ -97,8 +92,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-
-      {/* --- Upload Modal --- */}
       <Modal
         open={openUpload}
         onOpenChange={setOpenUpload}

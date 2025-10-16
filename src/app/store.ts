@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import videosReducer from './slices/videosSlice';
-import googleAuthReducer from './slices/googleAuthSlice';
+import authReducer from '@/features/auth/authSlice';
+import videosReducer from '@/features/videos/videosSlice';
+import googleAuthReducer from '@/features/googleAuth/googleAuthSlice';
 
 export const store = configureStore({
   reducer: {

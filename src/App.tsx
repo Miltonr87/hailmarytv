@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { store } from './store/store';
+import { store } from './app/store';
 import Index from './pages/Index';
 import TeamPage from './pages/TeamPage';
 import NotFound from './pages/NotFound';

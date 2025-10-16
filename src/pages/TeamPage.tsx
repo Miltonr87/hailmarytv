@@ -1,33 +1,35 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@/store/store';
-import { fetchTeamVideos } from '@/store/slices/videosSlice';
-import { NFL_TEAMS } from '@/config/youtube';
-import Navbar from '@/components/Navbar';
-import SecondaryNav from '@/components/SecondaryNav';
-import VideoCard from '@/components/VideoCard';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+import Navbar from '@/components/App/Navbar';
+import SecondaryNav from '@/components/App/SecondaryNav';
+import VideoCard from '@/components/Video/VideoCard';
+
+import { NFL_TEAMS } from '@/config/youtube';
+import { fetchTeamVideos } from '@/features/videos';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 
 const TeamPage = () => {
   const { teamName } = useParams<{ teamName: string }>();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const team = NFL_TEAMS.find(
     (t) => t.name.toLowerCase().replace(/\s+/g, '-') === teamName
   );
 
-  const videos = useSelector((state: RootState) =>
+  const videos = useAppSelector((state) =>
     team ? state.videos.teamVideos[team.name] || [] : []
   );
-
-  const loading = useSelector((state: RootState) => state.videos.loading);
+  const loading = useAppSelector((state) => state.videos.loading);
 
   useEffect(() => {
     if (team && videos.length === 0) {
-      dispatch(fetchTeamVideos(team.name, team.searchQuery));
+      dispatch(
+        fetchTeamVideos({ teamName: team.name, searchQuery: team.searchQuery })
+      );
     }
   }, [dispatch, team, videos.length]);
 
@@ -52,7 +54,6 @@ const TeamPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <SecondaryNav />
-
       <div className="container px-4 py-8">
         <Button
           variant="ghost"
@@ -62,8 +63,6 @@ const TeamPage = () => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
-
-        {/* Team header */}
         <div className="flex items-center gap-4 mb-8">
           <div
             className="h-12 w-2 rounded-full"
@@ -80,8 +79,6 @@ const TeamPage = () => {
             <h1 className="text-4xl font-bold">{team.name}</h1>
           </div>
         </div>
-
-        {/* Videos grid */}
         {loading && videos.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(12)].map((_, i) => (

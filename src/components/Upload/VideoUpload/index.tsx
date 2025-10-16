@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface VideoUploadProps {
   accessToken: string;
 }
 
-export const VideoUpload = ({ accessToken }: VideoUploadProps) => {
+const VideoUpload = ({ accessToken }: VideoUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
@@ -45,30 +47,52 @@ export const VideoUpload = ({ accessToken }: VideoUploadProps) => {
       );
 
       const data = await res.json();
-      setResponse(`✅ Uploaded! Video ID: ${data.id}`);
+
+      if (data.error) {
+        console.error('YouTube upload error:', data.error);
+        setResponse(
+          `❌ Upload failed: ${data.error.message || 'Unknown error'}`
+        );
+      } else {
+        setResponse(`✅ Uploaded! Video ID: ${data.id}`);
+      }
     } catch (err) {
+      console.error('Upload failed:', err);
       setResponse('❌ Upload failed');
-      console.error(err);
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-4">
-      <input
+    <div className="flex flex-col items-center gap-4 mt-6">
+      <Input
         type="file"
         accept="video/*"
         onChange={(e) => setFile(e.target.files?.[0] || null)}
+        disabled={uploading}
+        className="max-w-md"
       />
-      <button
+
+      <Button
         onClick={handleUpload}
         disabled={!file || uploading}
-        className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50"
+        className="min-w-[150px]"
       >
         {uploading ? 'Uploading...' : 'Upload Video'}
-      </button>
-      {response && <p className="text-sm mt-2">{response}</p>}
+      </Button>
+
+      {response && (
+        <p
+          className={`text-sm mt-2 ${
+            response.startsWith('✅') ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
+          {response}
+        </p>
+      )}
     </div>
   );
 };
+
+export default VideoUpload;

@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { RootState } from '@/store/store';
-import VideoCard from './VideoCard';
+import { useAppSelector } from '@/app/hooks';
+import VideoCard from '@/components/Video/VideoCard';
 
 const MoreVideosSection = () => {
-  const { featured, loading } = useSelector((state: RootState) => state.videos);
+  const { featured, loading } = useAppSelector((state) => state.videos);
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
