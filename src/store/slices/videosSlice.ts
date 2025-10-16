@@ -241,19 +241,53 @@ export const fetchVideosBySearch =
 export const fetchTeamVideos =
   (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
+
     try {
-      const videos = await fetchGlobalNFLVideos();
+      if (USE_MOCK) {
+        console.log(`🧩 Using mock data for ${teamName}`);
+        const filtered = mockVideos.filter((v) =>
+          v.title.toLowerCase().includes(teamName.toLowerCase())
+        );
+        dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 25) }));
+        return;
+      }
+
+      // 🎯 Build a precise NFL team query
+      const q = `${searchQuery || teamName} NFL`;
+      console.log('🔎 Fetching team videos for:', q);
+
+      const url = new URL('https://www.googleapis.com/youtube/v3/search');
+      url.searchParams.set('part', 'snippet');
+      url.searchParams.set('type', 'video');
+      url.searchParams.set('order', 'date');
+      url.searchParams.set('maxResults', '25');
+      url.searchParams.set('q', q);
+      url.searchParams.set('key', YOUTUBE_API_KEY);
+
+      const resp = await axios.get(url.toString());
+      const items = resp.data.items || [];
+
+      const videos: Video[] = items.map((item: any) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails?.high?.url,
+        channelTitle: item.snippet.channelTitle,
+        channelId: item.snippet.channelId,
+        publishedAt: item.snippet.publishedAt,
+      }));
+
+      // filter only NFL-related channels or titles
       const filtered = videos.filter(
         (v) =>
-          v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          v.description.toLowerCase().includes(searchQuery.toLowerCase())
+          v.title.toLowerCase().includes('nfl') ||
+          v.channelTitle.toLowerCase().includes('nfl') ||
+          v.description.toLowerCase().includes(teamName.toLowerCase())
       );
-      dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 40) }));
+
+      dispatch(setTeamVideos({ team: teamName, videos: filtered }));
     } catch (error: any) {
-      console.error(
-        '⚠️ Using mock videos for team due to API failure:',
-        error?.message || error
-      );
+      console.error(`⚠️ Failed to fetch ${teamName} videos:`, error?.message || error);
       dispatch(setTeamVideos({ team: teamName, videos: mockVideos }));
       dispatch(
         setError(

@@ -17,7 +17,7 @@ export const NFLVideos = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">🏈 NFL Official Videos</h2>
+      <h2 className="text-2xl font-bold mb-6">🏈 Videos</h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {videos.map((video) => (
           <VideoCard key={video.id} video={video} />
