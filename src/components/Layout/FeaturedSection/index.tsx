@@ -74,7 +74,6 @@ const FeaturedSection = () => {
     <section className="py-8 bg-background">
       <div className="container px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Featured */}
           <motion.div
             className="lg:col-span-7"
             initial={{ opacity: 0, y: 30 }}
@@ -119,8 +118,6 @@ const FeaturedSection = () => {
               </motion.div>
             )}
           </motion.div>
-
-          {/* Side list */}
           <div className="lg:col-span-5 space-y-4">
             {featured.slice(1, 5).map((video, i) => (
               <motion.div

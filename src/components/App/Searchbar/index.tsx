@@ -30,7 +30,6 @@ const Searchbar = () => {
     setQuery(term);
     setShowHistory(false);
     setIsLoading(true);
-
     try {
       await dispatch(fetchVideosBySearch(term));
     } finally {
@@ -66,7 +65,6 @@ const Searchbar = () => {
         disabled={isLoading}
         className="pr-12 bg-muted border-border transition-all"
       />
-
       <Button
         size="icon"
         variant="ghost"

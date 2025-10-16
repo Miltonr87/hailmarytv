@@ -11,22 +11,23 @@ import { toast } from '@/hooks/useToast';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, status } = useSelector((state: RootState) => state.googleAuth);
+  const { user, loading } = useSelector((state: RootState) => state.googleAuth);
   const [openUpload, setOpenUpload] = useState(false);
   const isAuthenticated = !!user;
 
   const handleLogin = async () => {
-    if (status === 'loading') return;
+    if (loading) return;
+
     try {
       await dispatch(googleSignIn()).unwrap();
       toast({
-        title: 'Login successful',
+        title: 'Login successful!',
         description: `Welcome back, ${user?.name?.split(' ')[0] || 'User'}!`,
       });
     } catch {
       toast({
         variant: 'destructive',
-        title: 'Login failed',
+        title: 'Login failed!',
         description: 'Please try again later.',
       });
     }
@@ -109,11 +110,11 @@ const Navbar = () => {
           ) : (
             <Button
               onClick={handleLogin}
-              disabled={status === 'loading'}
+              disabled={loading}
               className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <User className="h-4 w-4" />
-              {status === 'loading' ? 'Signing in...' : 'Login'}
+              {loading ? 'Signing in...' : 'Login'}
             </Button>
           )}
         </div>
