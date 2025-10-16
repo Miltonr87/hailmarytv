@@ -34,8 +34,8 @@ O layout da **home** não precisa ser exatamente como o do wireframe. Você pode
 **Requisitos esperados na entrega do teste**
 
 - [ ] Fornecer um mecanismo para o usuário poder pesquisar vídeos
-- [ ] Possuir home page que exiba algum conteúdo interessante para uma plataforma de vídeos
-- [ ] Fornecer uma estrutura de gerência do estado da aplicação
+- [ X ] Possuir home page que exiba algum conteúdo interessante para uma plataforma de vídeos
+- [ X ] Fornecer uma estrutura de gerência do estado da aplicação
 - [ ] Possuir histórico das buscas realizadas (persistir localmente)
 
 **Requisitos extras**

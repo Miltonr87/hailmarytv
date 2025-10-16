@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppDispatch } from '../store';
 import axios from 'axios';
+import mockVideos from '../mocks';
 
 export interface Video {
   id: string;
@@ -54,9 +55,16 @@ const videosSlice = createSlice({
 export const { setLoading, setFeaturedVideos, setTeamVideos, setError } =
   videosSlice.actions;
 export default videosSlice.reducer;
+
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
 async function fetchGlobalNFLVideos(): Promise<Video[]> {
+  if (USE_MOCK) {
+    console.log('🧩 Skipping YouTube API — using mock videos only.');
+    return mockVideos;
+  }
+
   const queries = ['NFL ESPN Brasil', 'NFL GETV'];
   const allResults: Video[] = [];
 
@@ -89,7 +97,6 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
       allResults.push(...videos);
       nextPageToken = resp.data.nextPageToken;
       if (!nextPageToken) break;
-
       pageCount++;
     }
   }
@@ -101,7 +108,8 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
   );
 
   return Array.from(new Map(filtered.map((v) => [v.id, v])).values()).sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 }
 
@@ -112,24 +120,44 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
     const videos = await fetchGlobalNFLVideos();
     dispatch(setFeaturedVideos(videos.slice(0, 40)));
   } catch (error: any) {
-    console.error('❌ Error fetching featured videos:', error);
-    dispatch(setError('Failed to fetch featured videos.'));
+    console.error('⚠️ Using mock videos due to API failure:', error?.message || error);
+    dispatch(setFeaturedVideos(mockVideos));
+    dispatch(
+      setError(
+        error?.response?.status
+          ? `YouTube API error ${error.response.status} — fallback to mock data.`
+          : 'Network error — using mock videos.'
+      )
+    );
   }
 };
 
 export const fetchTeamVideos =
   (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
+
     try {
       const videos = await fetchGlobalNFLVideos();
+
       const filtered = videos.filter(
         (v) =>
           v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           v.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
+
       dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 40) }));
     } catch (error: any) {
-      console.error('❌ Error fetching team videos:', error);
-      dispatch(setError('Failed to fetch team videos.'));
+      console.error(
+        '⚠️ Using mock videos for team due to API failure:',
+        error?.message || error
+      );
+      dispatch(setTeamVideos({ team: teamName, videos: mockVideos }));
+      dispatch(
+        setError(
+          error?.response?.status
+            ? `YouTube API error ${error.response.status} — fallback to mock data.`
+            : 'Network error — using mock videos.'
+        )
+      );
     }
   };
