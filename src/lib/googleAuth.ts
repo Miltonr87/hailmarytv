@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { GOOGLE_CONFIG } from '@/constants/google';
 
 let gapiLoaded = false;
@@ -16,7 +17,6 @@ declare global {
         google: typeof google;
     }
 }
-
 
 export function initGapi(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -47,7 +47,6 @@ export function initGapi(): Promise<void> {
     });
 }
 
-
 export function initGoogleIdentity(): Promise<void> {
     return new Promise((resolve, reject) => {
         if (gisLoaded) return resolve();
@@ -73,30 +72,25 @@ export async function signInWithGoogle(): Promise<{
     access_token: string;
 }> {
     if (!gisLoaded) await initGoogleIdentity();
-
     return new Promise((resolve, reject) => {
-        if (!window.google?.accounts?.oauth2) {
+        const oauth2 = window.google?.accounts?.oauth2;
+        if (!oauth2) {
             reject(new Error('Google Identity Services not loaded.'));
             return;
         }
-        tokenClient = window.google.accounts.oauth2.initTokenClient({
+        tokenClient = oauth2.initTokenClient({
             client_id: GOOGLE_CONFIG.CLIENT_ID,
             scope: GOOGLE_CONFIG.SCOPES,
             callback: async (tokenResponse: google.accounts.oauth2.TokenResponse) => {
-                if (tokenResponse.error) {
+                if ('error' in tokenResponse && tokenResponse.error) {
                     reject(new Error(`Token error: ${tokenResponse.error}`));
                     return;
                 }
                 accessToken = tokenResponse.access_token;
                 try {
-                    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    const { data: profile } = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
-                    if (!res.ok) {
-                        reject(await res.json());
-                        return;
-                    }
-                    const profile = await res.json();
                     resolve({
                         id: profile.sub,
                         name: profile.name,
@@ -105,7 +99,11 @@ export async function signInWithGoogle(): Promise<{
                         access_token: accessToken,
                     });
                 } catch (error) {
-                    reject(error);
+                    if (axios.isAxiosError(error)) {
+                        reject(error.response?.data || error.message);
+                    } else {
+                        reject(error);
+                    }
                 }
             },
         });
@@ -116,10 +114,12 @@ export async function signInWithGoogle(): Promise<{
 export async function signOutGoogle(): Promise<void> {
     try {
         if (accessToken) {
-            await fetch(`https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`, {
-                method: 'POST',
-                mode: 'no-cors',
-            });
+            await axios.post(
+                `https://accounts.google.com/o/oauth2/revoke?token=${accessToken}`,
+                {},
+                { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
+            );
+
             console.log('🔹 Token revoked');
             accessToken = null;
         }
