@@ -31,7 +31,6 @@ const googleAuthSlice = createSlice({
                 state.user = null;
                 state.isAuthenticated = false;
             })
-
             // 🔹 Sign-Out
             .addCase(googleSignOut.pending, (state) => {
                 state.loading = true;
