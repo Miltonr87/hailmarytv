@@ -4,19 +4,13 @@ const config: Config.InitialOptions = {
   testEnvironment: 'jsdom',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   setupFilesAfterEnv: ['<rootDir>/setup-tests.ts'],
-
-  // ✅ Resolve CSS/image modules & path aliases
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/constants/nfl_teams$': '<rootDir>/__mocks__/nfl_teams.ts'
   },
-
-  // ✅ Make Jest resolve @/* imports inside src
   moduleDirectories: ['node_modules', '<rootDir>/src'],
-
-  // ✅ Use ts-jest with a dedicated Jest TypeScript config
   transform: {
     '\\.[jt]sx?$': [
       'ts-jest',
@@ -27,8 +21,6 @@ const config: Config.InitialOptions = {
       }
     ]
   },
-
-  // ✅ Coverage configuration
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -41,8 +33,6 @@ const config: Config.InitialOptions = {
     '!vite.config.ts'
   ],
   coverageDirectory: '<rootDir>/coverage',
-
-  // ✅ Ignore Vite / Tailwind / boilerplate files from coverage
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
