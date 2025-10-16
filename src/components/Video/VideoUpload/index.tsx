@@ -20,20 +20,18 @@ const VideoUpload = ({ accessToken }: VideoUploadProps) => {
         title: 'HailMaryTV Test Upload',
         description: 'Uploaded via HailMaryTV React App ⚡',
         tags: ['NFL', 'Highlights', 'HailMaryTV'],
-        categoryId: '17', // Sports
+        categoryId: '17', // "Sports" from YouTube categories
       },
       status: {
         privacyStatus: 'private',
       },
     };
-
     const form = new FormData();
     form.append(
       'snippet',
       new Blob([JSON.stringify(metadata)], { type: 'application/json' })
     );
     form.append('videoFile', file);
-
     try {
       const res = await fetch(
         'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart&part=snippet,status',
@@ -45,9 +43,7 @@ const VideoUpload = ({ accessToken }: VideoUploadProps) => {
           body: form,
         }
       );
-
       const data = await res.json();
-
       if (data.error) {
         console.error('YouTube upload error:', data.error);
         setResponse(

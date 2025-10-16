@@ -5,8 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '@/app/store';
 import { googleSignIn, googleSignOut } from '@/features/googleAuth';
 import { Modal } from '@/components/ui/modal';
-import VideoUpload from '@/components/Upload/VideoUpload';
-import Searchbar from '@/components/Search/Searchbar';
+import VideoUpload from '@/components/Video/VideoUpload';
+import Searchbar from '@/components/App/Searchbar';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,7 +1,7 @@
 import Navbar from '@/components/App/Navbar';
 import SecondaryNav from '@/components/App/SecondaryNav';
-import FeaturedSection from '@/components/Video/FeaturedSection';
-import MoreVideosSection from '@/components/Video/MoreVideosSection';
+import FeaturedSection from '@/components/Layout/FeaturedSection';
+import MoreVideosSection from '@/components/Layout/MoreVideosSection';
 import Footer from '@/components/App/Footer';
 
 const Index = () => {
