@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "Milton Salazar",
+    "email": "miltonrodrigues713@gmail.com"
+  },
   "scripts": {
     "dev": "vite --port 8080 --open",
     "build": "tsc -b && vite build",
