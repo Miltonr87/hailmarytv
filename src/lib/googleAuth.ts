@@ -119,7 +119,6 @@ export async function signOutGoogle(): Promise<void> {
                 {},
                 { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
             );
-
             console.log('🔹 Token revoked');
             accessToken = null;
         }
