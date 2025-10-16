@@ -27,14 +27,16 @@
         "./src/*"
       ]
     },
+    /* ✅ Add this line */
     "types": [
       "jest",
+      "@testing-library/jest-dom",
       "node"
     ]
   },
   "include": [
     "src",
     "tests",
-    "jest.setup.ts"
+    "setup-tests.ts"
   ]
 }
