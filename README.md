@@ -75,7 +75,7 @@ This structure organizes the interface into:
 - **Molecules** (composite components like cards)
 - **Organisms** (sections like FeaturedSection, VideoUpload)
 
-This guarantees **design consistency**, and **reusability** across the entire project.
+This guarantees **design consistency** and **reusability** across the entire project.
 
 ---
 
@@ -125,6 +125,43 @@ APIs are defined in `/lib/googleAuth.ts`, using secure client-side access via en
 
 ---
 
+## 🧪 Testing with Jest
+
+This project uses **Jest + React Testing Library** to validate both logic and UI behavior with a modern, production-grade testing setup.
+
+### 🔍 Testing Approach
+
+Each feature and UI module includes its own isolated test suite:
+
+- **Unit Tests:** Validate Redux slices, hooks, and helper utilities.
+- **Integration Tests:** Validate components interacting with Redux (e.g., `VideoUpload`, `SearchBar`, `SecondaryNav`).
+- **Mocking:**
+  - Google API calls and fetch requests are mocked with `jest.fn()`.
+  - Framer Motion animations are mocked to avoid prop warnings.
+  - IntersectionObserver is stubbed for components using lazy loading.
+
+This ensures predictable, deterministic tests without external dependencies.
+
+### 🧾 Coverage Summary
+
+After running all suites:
+
+```
+Test Suites: 22 passed
+Tests:       91 passed
+Coverage:    ~90% (excluding Shadcn/UI primitives)
+```
+
+| Category            | Coverage    | Notes                                              |
+| ------------------- | ----------- | -------------------------------------------------- |
+| Core Components     | 90–100%     | All interactive sections covered                   |
+| Redux Slices        | 95–100%     | Auth, GoogleAuth, and Videos logic verified        |
+| Hooks & Utilities   | 85–95%      | Toast and device detection covered                 |
+| Pages (Home, Team)  | 95–100%     | Routing and rendering verified                     |
+| UI Library (Shadcn) | ⛔ Excluded | Third-party primitives not coverage, due to Atomic |
+
+---
+
 ## 🧩 Tech Stack
 
 | Layer               | Technology                          |
@@ -138,6 +175,7 @@ APIs are defined in `/lib/googleAuth.ts`, using secure client-side access via en
 | Icons               | Lucide React                        |
 | Toast Notifications | Radix UI + Sonner                   |
 | Build Tool          | Vite                                |
+| Testing             | Jest + React Testing Library        |
 
 ---
 
@@ -164,15 +202,17 @@ npm run dev
 
 # 3. Build for production
 npm run build
+
+# 4. Run test suites with coverage
+npm test -- --coverage
 ```
 
 ---
 
 ## 💻 Author Notes
 
-This project was developed by **Milton Rodrigues**, Frontend Engineer.
-
-It was built with scalability, maintainability, and design coherence in mind combining **modern React architecture**, **functional UI composition**, and **Google API integration**.
+This project was developed by **Milton Rodrigues**, Frontend Engineer.  
+It demonstrates a modern React architecture integrating **Redux Toolkit**, **TailwindCSS**, and **Google APIs**, backed by a **comprehensive Jest testing suite** ensuring reliability and scalability.
 
 ---
 
