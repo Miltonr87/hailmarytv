@@ -167,10 +167,9 @@ npm run build
 
 ---
 
-## 🧠 Author Notes
+## 💻 Author Notes
 
-This project was developed by **Milton Rodrigues**,  
-Frontend Engineer
+This project was developed by **Milton Rodrigues**, Frontend Engineer.
 
 It was built with scalability, maintainability, and design coherence in mind combining **modern React architecture**, **functional UI composition**, and **Google API integration**.
 
