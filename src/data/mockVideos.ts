@@ -1,4 +1,4 @@
-import { Video } from '@/store/slices/videosSlice';
+import type { Video } from '@/features/videos/videosTypes';
 
 export const MOCK_VIDEOS: Video[] = [
   {

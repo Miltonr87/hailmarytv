@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { NFL_TEAMS } from '@/config/youtube';
+import { NFL_TEAMS } from '@/data/nfl_teams';
 
 const SecondaryNav = () => {
   const navigate = useNavigate();
