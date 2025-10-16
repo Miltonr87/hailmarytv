@@ -20,7 +20,7 @@ const VideoUpload = ({ accessToken }: VideoUploadProps) => {
         title: 'HailMaryTV Test Upload',
         description: 'Uploaded via HailMaryTV React App ⚡',
         tags: ['NFL', 'Highlights', 'HailMaryTV'],
-        categoryId: '17', // "Sports" from YouTube categories
+        categoryId: '17',
       },
       status: {
         privacyStatus: 'private',
@@ -69,7 +69,6 @@ const VideoUpload = ({ accessToken }: VideoUploadProps) => {
         disabled={uploading}
         className="max-w-md"
       />
-
       <Button
         onClick={handleUpload}
         disabled={!file || uploading}
@@ -77,7 +76,6 @@ const VideoUpload = ({ accessToken }: VideoUploadProps) => {
       >
         {uploading ? 'Uploading...' : 'Upload Video'}
       </Button>
-
       {response && (
         <p
           className={`text-sm mt-2 ${
