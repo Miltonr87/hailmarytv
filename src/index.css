@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+All colors MUST be HSL!
 */
 
 @layer base {
@@ -42,10 +42,18 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(220 45% 25%), hsl(220 55% 35%));
-    --gradient-accent: linear-gradient(135deg, hsl(355 85% 55%), hsl(15 85% 60%));
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(220 45% 25%),
+      hsl(220 55% 35%)
+    );
+    --gradient-accent: linear-gradient(
+      135deg,
+      hsl(355 85% 55%),
+      hsl(15 85% 60%)
+    );
     --gradient-gold: linear-gradient(135deg, hsl(45 95% 55%), hsl(35 95% 65%));
-    
+
     /* Shadows */
     --shadow-glow: 0 0 30px hsl(220 45% 25% / 0.2);
     --shadow-card: 0 4px 20px hsl(220 45% 25% / 0.08);
