@@ -178,4 +178,4 @@ It was built with scalability, maintainability, and design coherence in mind com
 ## 📜 License
 
 This project is for educational and demonstration purposes only.  
-All rights to the YouTube API and branding belong to **Google LLC**.
+All rights to the YouTube API and branding belong to **Google LLC** and **NFL**.
