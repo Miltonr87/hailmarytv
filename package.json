@@ -9,8 +9,7 @@
   },
   "scripts": {
     "dev": "vite --port 8080 --open",
-    "build": "tsc -b && vite build",
-    "build:dev": "vite build --mode development",
+    "build": "vite build",
     "lint": "eslint . --fix --max-warnings=0",
     "format": "prettier . --write --ignore-unknown",
     "preview": "vite preview",
