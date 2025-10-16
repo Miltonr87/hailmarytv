@@ -18,9 +18,11 @@ const TeamPage = () => {
   const team = NFL_TEAMS.find(
     (t) => t.name.toLowerCase().replace(/\s+/g, '-') === teamName
   );
+
   const videos = useSelector((state: RootState) =>
     team ? state.videos.teamVideos[team.name] || [] : []
   );
+
   const loading = useSelector((state: RootState) => state.videos.loading);
 
   useEffect(() => {
@@ -61,14 +63,25 @@ const TeamPage = () => {
           Back
         </Button>
 
+        {/* Team header */}
         <div className="flex items-center gap-4 mb-8">
           <div
             className="h-12 w-2 rounded-full"
             style={{ backgroundColor: team.color }}
           />
-          <h1 className="text-4xl font-bold">{team.name}</h1>
+          <div className="flex items-center gap-3">
+            {team.logoUrl && (
+              <img
+                src={team.logoUrl}
+                alt={`${team.name} logo`}
+                className="w-10 h-10 object-contain"
+              />
+            )}
+            <h1 className="text-4xl font-bold">{team.name}</h1>
+          </div>
         </div>
 
+        {/* Videos grid */}
         {loading && videos.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(12)].map((_, i) => (

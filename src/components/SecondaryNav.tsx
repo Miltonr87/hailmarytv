@@ -65,7 +65,6 @@ const SecondaryNav = () => {
                 Teams <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent className="max-h-96 overflow-y-auto bg-card border border-border shadow-lg">
               <AnimatePresence>
                 {open &&
@@ -80,12 +79,15 @@ const SecondaryNav = () => {
                         onClick={() => handleTeamClick(team.name)}
                         className="cursor-pointer hover:bg-accent/30 transition-colors"
                       >
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: team.color }}
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={team.logoUrl}
+                            alt={team.name}
+                            className="w-6 h-6 object-contain"
                           />
-                          {team.name}
+                          <span className="text-sm font-medium">
+                            {team.name}
+                          </span>
                         </div>
                       </DropdownMenuItem>
                     </motion.div>

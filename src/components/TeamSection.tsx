@@ -13,9 +13,14 @@ interface TeamSectionProps {
   teamColor: string;
 }
 
-const TeamSection = ({ teamName, searchQuery, teamColor }: TeamSectionProps) => {
+const TeamSection = ({
+  teamName,
+  searchQuery,
+  teamColor,
+}: TeamSectionProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const videos = useSelector((state: RootState) => state.videos.teamVideos[teamName]) || [];
+  const videos =
+    useSelector((state: RootState) => state.videos.teamVideos[teamName]) || [];
 
   useEffect(() => {
     if (videos.length === 0) {
@@ -31,7 +36,7 @@ const TeamSection = ({ teamName, searchQuery, teamColor }: TeamSectionProps) => 
     <div className="py-6 border-b border-border last:border-0">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="h-8 w-1 rounded-full"
             style={{ backgroundColor: teamColor }}
           />
@@ -41,7 +46,6 @@ const TeamSection = ({ teamName, searchQuery, teamColor }: TeamSectionProps) => 
           View All <ChevronRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
-      
       {videos.length === 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
@@ -55,11 +59,7 @@ const TeamSection = ({ teamName, searchQuery, teamColor }: TeamSectionProps) => 
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {videos.slice(0, 4).map((video) => (
-            <VideoCard
-              key={video.id}
-              video={video}
-              onClick={() => handleVideoClick(video.id)}
-            />
+            <VideoCard key={video.id} video={video} />
           ))}
         </div>
       )}
