@@ -33,7 +33,8 @@ const config: Config.InitialOptions = {
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
+    "!src/components/ui/**",
+    "!src/**/*.d.ts",
     '!src/**/*.{spec,test}.{ts,tsx}',
     '!**/node_modules/**',
     '!**/dist/**',
