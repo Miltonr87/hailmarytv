@@ -6,8 +6,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { store } from './app/store';
-import Index from './pages/Index';
-import TeamPage from './pages/TeamPage';
+import HomePage from './pages/Home';
+import TeamPage from './pages/Team';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -24,7 +24,7 @@ const App = () => (
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
           >
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/team/:teamName" element={<TeamPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
