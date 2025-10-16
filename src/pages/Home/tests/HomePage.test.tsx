@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import HomePage from './index';
+import HomePage from '../index';
 
 jest.mock('@/components/App/Navbar', () => () => (
   <div data-testid="navbar">Navbar</div>

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import TeamPage from './index';
+import TeamPage from '../index';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { fetchTeamVideos } from '@/features/videos';
 import { NFL_TEAMS } from '@/constants/nfl_teams';

@@ -5,7 +5,7 @@ import {
     signInWithGoogle,
     signOutGoogle,
     getAccessToken,
-} from './googleAuth';
+} from '../googleAuth';
 import { GOOGLE_CONFIG } from '@/constants/google';
 
 jest.mock('@/constants/google', () => ({

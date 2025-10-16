@@ -8,19 +8,28 @@ const config: Config.InitialOptions = {
     '\\.(css|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/constants/nfl_teams$': '<rootDir>/__mocks__/nfl_teams.ts'
+    '^@/constants/nfl_teams$': '<rootDir>/__mocks__/nfl_teams.ts',
   },
   moduleDirectories: ['node_modules', '<rootDir>/src'],
   transform: {
-    '\\.[jt]sx?$': [
+    '^.+\\.[tj]sx?$': [
       'ts-jest',
       {
         tsconfig: '<rootDir>/tsconfig.jest.json',
+        useESM: true,
         isolatedModules: false,
-        diagnostics: false
-      }
-    ]
+        diagnostics: false,
+      },
+    ],
   },
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@reduxjs|axios)/)',
+  ],
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -30,7 +39,7 @@ const config: Config.InitialOptions = {
     '!**/dist/**',
     '!**/build/**',
     '!**/coverage/**',
-    '!vite.config.ts'
+    '!vite.config.ts',
   ],
   coverageDirectory: '<rootDir>/coverage',
   coveragePathIgnorePatterns: [
@@ -46,8 +55,8 @@ const config: Config.InitialOptions = {
     'setup-tests.ts',
     'src/constants/google.ts',
     'src/constants/nfl_teams.ts',
-    'src/lib/googleAuth.ts'
-  ]
+    'src/lib/googleAuth.ts',
+  ],
 };
 
 export default config;

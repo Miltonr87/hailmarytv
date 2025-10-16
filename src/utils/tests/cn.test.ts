@@ -1,4 +1,4 @@
-import { cn } from './cn';
+import { cn } from '../cn';
 
 describe('cn utility', () => {
     it('merges multiple class names correctly', () => {
