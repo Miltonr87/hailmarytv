@@ -119,7 +119,7 @@ APIs are defined in `/lib/googleAuth.ts`, using secure client-side access via en
 
 ### 7. **Performance Optimizations**
 
-- **Lazy loading** of embedded YouTube players via `IntersectionObserver`
+- **Lazy loading** of embedded YouTube players
 - **Framer Motion** animations for smooth transitions
 - **Local persistence** for user search history and session data
 
@@ -127,7 +127,7 @@ APIs are defined in `/lib/googleAuth.ts`, using secure client-side access via en
 
 ## 🧪 Testing with Jest
 
-This project uses **Jest + React Testing Library** to validate both logic and UI behavior with a modern, production-grade testing setup.
+This project uses **Jest + React Testing Library** to validate both logic and UI behavior.
 
 ### 🔍 Testing Approach
 
@@ -140,11 +140,7 @@ Each feature and UI module includes its own isolated test suite:
   - Framer Motion animations are mocked to avoid prop warnings.
   - IntersectionObserver is stubbed for components using lazy loading.
 
-This ensures predictable, deterministic tests without external dependencies.
-
 ### 🧾 Coverage Summary
-
-After running all suites:
 
 ```
 Test Suites: 22 passed
@@ -212,11 +208,11 @@ npm test -- --coverage
 ## 💻 Author Notes
 
 This project was developed by **Milton Rodrigues**, Frontend Engineer.  
-It demonstrates a modern React architecture integrating **Redux Toolkit**, **TailwindCSS**, and **Google APIs**, backed by a **comprehensive Jest testing suite** ensuring reliability and scalability.
+It demonstrates a modern React architecture integrating **Redux Toolkit**, **TailwindCSS**, and **Google APIs**.
 
 ---
 
 ## 📜 License
 
 This project is for educational and demonstration purposes only.  
-All rights to the YouTube API and branding belong to **Google LLC** and **NFL**.
+All rights to the YouTube API and branding belong to **Google** and **NFL**.
