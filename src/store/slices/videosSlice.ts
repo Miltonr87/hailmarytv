@@ -80,10 +80,8 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
       url.searchParams.set('q', q);
       url.searchParams.set('key', YOUTUBE_API_KEY);
       if (nextPageToken) url.searchParams.set('pageToken', nextPageToken);
-
       const resp = await axios.get(url.toString());
       const items = resp.data.items || [];
-
       const videos: Video[] = items.map((item: any) => ({
         id: item.id.videoId,
         title: item.snippet.title,
@@ -93,7 +91,6 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
         channelId: item.snippet.channelId,
         publishedAt: item.snippet.publishedAt,
       }));
-
       allResults.push(...videos);
       nextPageToken = resp.data.nextPageToken;
       if (!nextPageToken) break;
@@ -106,7 +103,6 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
       v.channelTitle.toLowerCase().includes(name.toLowerCase())
     )
   );
-
   return Array.from(new Map(filtered.map((v) => [v.id, v])).values()).sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -115,7 +111,6 @@ async function fetchGlobalNFLVideos(): Promise<Video[]> {
 
 export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
-
   try {
     const videos = await fetchGlobalNFLVideos();
     dispatch(setFeaturedVideos(videos.slice(0, 40)));
@@ -135,16 +130,13 @@ export const fetchFeaturedVideos = () => async (dispatch: AppDispatch) => {
 export const fetchTeamVideos =
   (teamName: string, searchQuery: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
-
     try {
       const videos = await fetchGlobalNFLVideos();
-
       const filtered = videos.filter(
         (v) =>
           v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           v.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
-
       dispatch(setTeamVideos({ team: teamName, videos: filtered.slice(0, 40) }));
     } catch (error: any) {
       console.error(
