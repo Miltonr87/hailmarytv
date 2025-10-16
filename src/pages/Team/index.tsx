@@ -33,6 +33,7 @@ const TeamPage = () => {
     }
   }, [dispatch, team, videos.length]);
 
+  // verificar comportamento!
   if (!team) {
     return (
       <div className="min-h-screen bg-background">
