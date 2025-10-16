@@ -33,10 +33,6 @@ const TeamPage = () => {
     }
   }, [dispatch, team, videos.length]);
 
-  const handleVideoClick = (videoId: string) => {
-    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-  };
-
   if (!team) {
     return (
       <div className="min-h-screen bg-background">
@@ -98,11 +94,7 @@ const TeamPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {videos.map((video) => (
-              <VideoCard
-                key={video.id}
-                video={video}
-                onClick={() => handleVideoClick(video.id)}
-              />
+              <VideoCard key={video.id} video={video} />
             ))}
           </div>
         )}
