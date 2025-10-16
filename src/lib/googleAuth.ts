@@ -1,12 +1,4 @@
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
-const SCOPES = [
-    'openid',
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/youtube.upload',
-].join(' ');
+import { GOOGLE_CONFIG } from '@/constants/google';
 
 let gapiLoaded = false;
 let gisLoaded = false;
@@ -15,35 +7,46 @@ let accessToken: string | null = null;
 
 declare global {
     interface Window {
-        gapi: any;
-        google: any;
+        gapi: {
+            load: (name: string, callback: () => void) => void;
+            client: {
+                init: (args: { apiKey: string; discoveryDocs: string[] }) => Promise<void>;
+            };
+        };
+        google: typeof google;
     }
 }
+
 
 export function initGapi(): Promise<void> {
     return new Promise((resolve, reject) => {
         if (gapiLoaded) return resolve();
         const script = document.createElement('script');
         script.src = 'https://apis.google.com/js/api.js';
-        script.onload = async () => {
+        script.onload = () => {
             try {
-                await window.gapi.load('client', async () => {
-                    await window.gapi.client.init({
-                        apiKey: API_KEY,
-                        discoveryDocs: [DISCOVERY_DOC],
-                    });
-                    gapiLoaded = true;
-                    console.log('✅ GAPI initialized');
-                    resolve();
+                window.gapi.load('client', async () => {
+                    try {
+                        await window.gapi.client.init({
+                            apiKey: GOOGLE_CONFIG.API_KEY,
+                            discoveryDocs: [GOOGLE_CONFIG.DISCOVERY_DOC],
+                        });
+                        gapiLoaded = true;
+                        console.log('✅ GAPI initialized');
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
                 });
             } catch (err) {
                 reject(err);
             }
         };
-        script.onerror = reject;
+        script.onerror = () => reject(new Error('Failed to load GAPI script.'));
         document.body.appendChild(script);
     });
 }
+
 
 export function initGoogleIdentity(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -57,7 +60,7 @@ export function initGoogleIdentity(): Promise<void> {
             console.log('✅ Google Identity initialized');
             resolve();
         };
-        script.onerror = reject;
+        script.onerror = () => reject(new Error('Failed to load Google Identity script.'));
         document.body.appendChild(script);
     });
 }
@@ -70,17 +73,18 @@ export async function signInWithGoogle(): Promise<{
     access_token: string;
 }> {
     if (!gisLoaded) await initGoogleIdentity();
+
     return new Promise((resolve, reject) => {
         if (!window.google?.accounts?.oauth2) {
             reject(new Error('Google Identity Services not loaded.'));
             return;
         }
         tokenClient = window.google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: async (tokenResponse: any) => {
+            client_id: GOOGLE_CONFIG.CLIENT_ID,
+            scope: GOOGLE_CONFIG.SCOPES,
+            callback: async (tokenResponse: google.accounts.oauth2.TokenResponse) => {
                 if (tokenResponse.error) {
-                    reject(tokenResponse);
+                    reject(new Error(`Token error: ${tokenResponse.error}`));
                     return;
                 }
                 accessToken = tokenResponse.access_token;
@@ -89,7 +93,6 @@ export async function signInWithGoogle(): Promise<{
                     const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
-
                     if (!res.ok) {
                         reject(await res.json());
                         return;
@@ -107,6 +110,7 @@ export async function signInWithGoogle(): Promise<{
                 }
             },
         });
+
         tokenClient.requestAccessToken({ prompt: 'consent' });
     });
 }
@@ -127,6 +131,10 @@ export async function signOutGoogle(): Promise<void> {
     } catch (e) {
         console.warn('⚠️ Sign-out warning:', e);
     }
+}
+
+export function getAccessToken(): string | null {
+    return accessToken;
 }
 
 export function getCurrentUser() {
