@@ -7,6 +7,7 @@ import { googleSignIn, googleSignOut } from '@/features/googleAuth';
 import { Modal } from '@/components/ui/modal';
 import VideoUpload from '@/components/Video/VideoUpload';
 import Searchbar from '@/components/App/Searchbar';
+import { toast } from '@/hooks/useToast';
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,12 +15,37 @@ const Navbar = () => {
   const [openUpload, setOpenUpload] = useState(false);
   const isAuthenticated = !!user;
 
-  const handleLogin = () => {
-    if (status !== 'loading') dispatch(googleSignIn());
+  const handleLogin = async () => {
+    if (status === 'loading') return;
+    try {
+      await dispatch(googleSignIn()).unwrap();
+      toast({
+        title: 'Login successful',
+        description: `Welcome back, ${user?.name?.split(' ')[0] || 'User'}!`,
+      });
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Login failed',
+        description: 'Please try again later.',
+      });
+    }
   };
 
-  const handleLogout = () => {
-    dispatch(googleSignOut());
+  const handleLogout = async () => {
+    try {
+      await dispatch(googleSignOut()).unwrap();
+      toast({
+        title: 'Logged out',
+        description: 'You have been signed out successfully.',
+      });
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Logout failed',
+        description: 'Something went wrong while signing out.',
+      });
+    }
   };
 
   return (
