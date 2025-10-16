@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { fetchVideosBySearch } from '@/features/videos';
+import {
+  addSearchHistory,
+  loadSearchHistoryState,
+} from '@/features/videos/videosSlice';
 
 const Searchbar = () => {
   const dispatch = useAppDispatch();
@@ -14,6 +18,10 @@ const Searchbar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    dispatch(loadSearchHistoryState());
+  }, [dispatch]);
+
   const handleSearch = async () => {
     if (!query.trim() || isLoading) return;
     setIsLoading(true);
@@ -21,6 +29,7 @@ const Searchbar = () => {
 
     try {
       await dispatch(fetchVideosBySearch(query.trim()));
+      dispatch(addSearchHistory(query.trim()));
     } finally {
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -32,6 +41,7 @@ const Searchbar = () => {
     setIsLoading(true);
     try {
       await dispatch(fetchVideosBySearch(term));
+      dispatch(addSearchHistory(term));
     } finally {
       setTimeout(() => setIsLoading(false), 500);
     }
@@ -65,6 +75,7 @@ const Searchbar = () => {
         disabled={isLoading}
         className="pr-12 bg-muted border-border transition-all"
       />
+
       <Button
         size="icon"
         variant="ghost"
