@@ -7,7 +7,7 @@ import Navbar from '@/components/App/Navbar';
 import SecondaryNav from '@/components/App/SecondaryNav';
 import VideoCard from '@/components/Video/VideoCard';
 
-import { NFL_TEAMS } from '@/data/nfl_teams';
+import { NFL_TEAMS } from '@/constants/nfl_teams';
 import { fetchTeamVideos } from '@/features/videos';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 

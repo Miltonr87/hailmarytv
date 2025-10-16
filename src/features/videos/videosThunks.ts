@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import mockVideos from '@/store/mocks';
+import mockVideos from '@/components/Video/__mocks__';
 import { Video } from './videosTypes';
-import { YOUTUBE_API_KEY } from '@/data/nfl_teams';
+import { YOUTUBE_API_KEY } from '@/constants/nfl_teams';
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
